@@ -8,7 +8,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
 
 from .quota import check_and_consume
-from .render import RenderError, render_page_to_png
+from .render import RenderError, render_page_to_webp
 from .storage import ensure_dirs, pdf_path
 
 APP_TITLE = "progressive-pdf-to-web"
@@ -81,7 +81,7 @@ def get_page_png(doc_id: str, page: int) -> FileResponse:
         raise HTTPException(status_code=404, detail="Document not found")
 
     try:
-        out_path = render_page_to_png(pdf_file, doc_id=doc_id, page=page)
+        out_path = render_page_to_webp(pdf_file, doc_id=doc_id, page=page)
     except RenderError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -105,7 +105,7 @@ def page_view(
 
     # Render / cache
     try:
-        render_page_to_png(pdf_file, doc_id=doc_id, page=page)
+        render_page_to_webp(pdf_file, doc_id=doc_id, page=page)
     except RenderError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
